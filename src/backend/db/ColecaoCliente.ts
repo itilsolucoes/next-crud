@@ -2,12 +2,11 @@ import firebase from '../config'
 
 import Cliente from '../../core/Cliente'
 import ClienteRepositorio from '../../core/ClienteRepositorio'
-import { IconeEdicao } from '../../components/Icones';
 
 export default class ColecaoCliente implements ClienteRepositorio  {
 
     #conversor = {
-        toFiresotre(cliente: Cliente) {
+        toFirestore(cliente: Cliente) {
             return {
                 nome: cliente.nome,
                 idade: cliente.idade
@@ -21,6 +20,7 @@ export default class ColecaoCliente implements ClienteRepositorio  {
         }
     }
 
+   
     async salvar(cliente: Cliente): Promise<Cliente> {
         if(cliente?.id) {
             await this.colecao().doc(cliente.id).set(cliente)
@@ -38,10 +38,11 @@ export default class ColecaoCliente implements ClienteRepositorio  {
     async excluir(cliente: Cliente): Promise<void> {
         return this.colecao().doc(cliente.id).delete()
     }
+    
     async obterTodos(): Promise<Cliente[]> {
         const query = await this.colecao().get()
 
-        return query.docs.map(doc => doc.data())
+        return query.docs.map(doc => doc.data()) ?? [] //se não encontrar nada, retorna um array vazio []
     }
 
     private colecao(){
